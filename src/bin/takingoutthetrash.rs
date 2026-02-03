@@ -1,7 +1,4 @@
-use std::{
-    collections::VecDeque,
-    io::{self, Read},
-};
+use std::io::{self, Read};
 
 #[inline]
 fn read_to_end() -> String {
@@ -21,34 +18,29 @@ fn main() {
         bags.push(w.parse().unwrap())
     }
 
+    if n == 0 {
+        println!("0");
+        return;
+    }
+
     bags.sort();
 
-    let mut bags = VecDeque::from(bags);
-
+    let mut i = 0;
+    let mut j = n - 1;
     let mut trips = 0;
 
-    while bags.len() != 0 {
-        if bags.len() == 1 {
+    while i <= j {
+        if bags[i] + bags[j] <= m {
+            i += 1;
+        }
+
+        if j == 0 {
             trips += 1;
             break;
         }
 
-        let lightest = bags.pop_front();
-        let heaviest = bags.pop_back();
-
-        match (lightest, heaviest) {
-            (Some(l), Some(h)) => {
-                if l + h > m {
-                    trips += 1;
-                    bags.push_front(l);
-                } else {
-                    trips += 1;
-                }
-            }
-            _ => {
-                trips += 1;
-            }
-        }
+        j -= 1;
+        trips += 1
     }
 
     println!("{}", trips);
