@@ -1,3 +1,5 @@
+/// https://itu.kattis.com/courses/BAPS/APS-26/assignments/guzmvm/problems/grandpabernie
+
 use std::{collections::HashMap, io::stdin};
 
 fn main() {
