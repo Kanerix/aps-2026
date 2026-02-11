@@ -1,3 +1,5 @@
+/// https://itu.kattis.com/courses/BAPS/APS-26/assignments/hebfvi/problems/rijeci
+
 use std::io::{self, Read};
 
 #[inline]

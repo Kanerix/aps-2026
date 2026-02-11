@@ -9,5 +9,5 @@ fn read_to_end() -> String {
 
 fn main() {
     let input = read_to_end();
-    dbg!(input);
+    println!("{input}")
 }
