@@ -9,5 +9,9 @@ fn read_to_end() -> String {
 
 fn main() {
     let input = read_to_end();
-    println!("{input}")
+    let mut lines = input.lines();
+
+    let n: usize = lines.next().unwrap().parse().unwrap();
+    for _ in 0..n {
+    }
 }
