@@ -27,16 +27,23 @@ let rec dp (C: int) (items: Item list) =
     let rec aux (item: Item) (prev: int list) (weight: int) =
         match item with
         | _ when weight >= C + 1 -> []
-        | _, w when weight = 0 -> prev[0] :: aux item prev (weight + 1)
-        | _, w when weight < w -> prev[weight - 1] :: aux item prev (weight + 1)
+        | _ when weight = 0 -> 0 :: aux item prev (weight + 1)
+        | _, w when weight < w -> prev[weight] :: aux item prev (weight + 1)
         | v, w ->
-            let p = prev[weight - 1]
-            let o = prev[weight - w] + v
-            let choice = max p o
-            choice :: aux item prev (weight + 1)
+            let pi = prev[weight]
+            let ci = prev[weight - w] + v
+            max pi ci :: aux item prev (weight + 1)
 
-    let bc = row C
+    let bc = row (C + 1)
 
-    items |> List.fold (fun curr item -> aux item curr 0) bc
+    items
+    |> List.fold
+        (fun (prev, acc) item ->
+            let after = aux item prev 0
+            let combined = after :: acc
+            after, combined)
+        (bc, [])
+    |> snd
+    |> List.rev
 
-dp C items |> List.iter (printf "%d ")
+let table = dp C items

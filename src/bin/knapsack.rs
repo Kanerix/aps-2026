@@ -31,7 +31,7 @@ struct Object {
 #[derive(Debug)]
 struct DP {
     knapsack: Knapsack,
-    dp: Vec<Vec<usize>>,
+    table: Vec<Vec<usize>>,
 }
 
 impl Knapsack {
@@ -97,7 +97,10 @@ impl DP {
         let object_count = knapsack.objects.len();
         let capacity = knapsack.capacity;
         let dp = vec![vec![0; capacity + 1]; object_count + 1];
-        Self { knapsack, dp }
+        Self {
+            knapsack,
+            table: dp,
+        }
     }
 
     /// Calculate all the possible knapsack solutions.
@@ -110,11 +113,11 @@ impl DP {
 
             for w in 0..=capacity {
                 if object.weight > w {
-                    self.dp[i][w] = self.dp[i - 1][w];
+                    self.table[i][w] = self.table[i - 1][w];
                 } else {
-                    self.dp[i][w] = max(
-                        self.dp[i - 1][w],
-                        self.dp[i - 1][w - object.weight] + object.value,
+                    self.table[i][w] = max(
+                        self.table[i - 1][w],
+                        self.table[i - 1][w - object.weight] + object.value,
                     )
                 }
             }
@@ -128,7 +131,7 @@ impl DP {
         let objects_len = self.knapsack.objects.len();
 
         for i in (1..=objects_len).rev() {
-            if self.dp[i][capacity] != self.dp[i - 1][capacity] {
+            if self.table[i][capacity] != self.table[i - 1][capacity] {
                 let obj = &self.knapsack.objects[i - 1];
                 chosen.push(i - 1);
                 capacity -= obj.weight;
@@ -174,6 +177,9 @@ fn main() {
     for knapsack in knapsacks {
         let mut db = DP::from_knapsack(knapsack);
         db.fill_table();
+        for r in &db.table {
+            println!("{:?}", r);
+        }
         let answer = db.chosen_indicies();
         create_output(&mut output, answer);
     }
