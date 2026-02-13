@@ -48,14 +48,21 @@ let rec dp (C: int) (items: Item list) =
 
 let table = dp C items
 
-let rec backtrack (table: int list list) =
-    match table with
-    | [] -> []
-    | h :: m :: t ->
-        Console.WriteLine h
-        0 :: backtrack t
-    | h :: t -> 0 :: backtrack t
+let backtrack (items: Item list) (table: int list list) =
+    let rec aux (table: int list list) (row: int) (col: int) =
+        match table with
+        | h :: m :: t ->
+            if h[col] <> m[col] then
+                let v, w = items[row - 1]
+                row - 1 :: aux (m :: t) (row - 1) (col - w)
+            else
+                aux (m :: t) (row - 1) col
+        | h :: [] -> if h[col] <> 0 then [ row ] else []
+        | _ -> failwith "unreachable"
 
-let result = backtrack table
+    aux table n C
 
-Console.Write result
+let result = backtrack items (table |> List.rev)
+
+Console.WriteLine result.Length
+result |> List.iter (printf "%d ")
