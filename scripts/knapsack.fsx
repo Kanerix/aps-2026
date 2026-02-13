@@ -37,7 +37,6 @@ let rec dp (C: int) (items: Item list) =
             after, combined)
         (bc, [])
     |> snd
-    |> List.rev
 
 let backtrack (items: Item list) (table: int list list) =
     let rec aux (table: int list list) (row: int) (col: int) =
@@ -67,7 +66,7 @@ let rec solve () =
         let items = readItems n
         let table = dp C items
 
-        let result = backtrack items (table |> List.rev)
+        let result = backtrack items table
 
         Console.WriteLine result.Length
         result |> List.iter (printf "%d ")
