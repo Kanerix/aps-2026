@@ -1,10 +1,5 @@
 open System
 
-let inputLine = Console.ReadLine().Split ' '
-
-let C = int inputLine[0]
-let n = int inputLine[1]
-
 type Item = (int * int)
 
 let rec readItems n =
@@ -15,8 +10,6 @@ let rec readItems n =
         let value = int itemLine[0]
         let weight = int itemLine[1]
         Item(value, weight) :: readItems (n - 1)
-
-let items = readItems n
 
 let rec row n =
     match n with
@@ -46,8 +39,6 @@ let rec dp (C: int) (items: Item list) =
     |> snd
     |> List.rev
 
-let table = dp C items
-
 let backtrack (items: Item list) (table: int list list) =
     let rec aux (table: int list list) (row: int) (col: int) =
         match table with
@@ -60,9 +51,27 @@ let backtrack (items: Item list) (table: int list list) =
         | h :: [] -> if h[col] <> 0 then [ row ] else []
         | _ -> failwith "unreachable"
 
-    aux table n C
+    aux table table.Length (table[0].Length - 1)
 
-let result = backtrack items (table |> List.rev)
+let rec solve () =
+    let inputLine = Console.ReadLine()
 
-Console.WriteLine result.Length
-result |> List.iter (printf "%d ")
+    match inputLine with
+    | null -> ()
+    | line ->
+        let inputLine = line.Split ' '
+
+        let C = int inputLine[0]
+        let n = int inputLine[1]
+
+        let items = readItems n
+        let table = dp C items
+
+        let result = backtrack items (table |> List.rev)
+
+        Console.WriteLine result.Length
+        result |> List.iter (printf "%d ")
+        Console.WriteLine()
+        solve ()
+
+solve ()
