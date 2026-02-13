@@ -47,3 +47,15 @@ let rec dp (C: int) (items: Item list) =
     |> List.rev
 
 let table = dp C items
+
+let rec backtrack (table: int list list) =
+    match table with
+    | [] -> []
+    | h :: m :: t ->
+        Console.WriteLine h
+        0 :: backtrack t
+    | h :: t -> 0 :: backtrack t
+
+let result = backtrack table
+
+Console.Write result
