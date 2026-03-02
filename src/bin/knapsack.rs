@@ -1,16 +1,17 @@
-/// https://itu.kattis.com/courses/BAPS/APS-26/assignments/hebfvi/problems/knapsack
-///
-/// This is the classic 0/1 Knapsack problem.
-///
-/// ### Kattis description:
-///
-/// Implement a solution to the classic knapsack problem. You are given a
-/// knapsack that can hold up to a certain weight (its capacity), and several
-/// items you may choose to put in the knapsack. Each item has a weight and a
-/// value. Choose a subset of the items (which could be all of them, or none of
-/// them) having the greatest value that fit into the knapsack (i.e. the sum of
-/// the weights of the items you choose must be less than or equal to the
-/// knapsack capacity).
+//! https://itu.kattis.com/courses/BAPS/APS-26/assignments/hebfvi/problems/knapsack
+//!
+//! This is the classic 0/1 Knapsack problem.
+//!
+//! ### Kattis description:
+//!
+//! Implement a solution to the classic knapsack problem. You are given a
+//! knapsack that can hold up to a certain weight (its capacity), and several
+//! items you may choose to put in the knapsack. Each item has a weight and a
+//! value. Choose a subset of the items (which could be all of them, or none of
+//! them) having the greatest value that fit into the knapsack (i.e. the sum of
+//! the weights of the items you choose must be less than or equal to the
+//! knapsack capacity).
+
 use std::{
     cmp::max,
     io::{self, Read},
@@ -36,8 +37,6 @@ struct DP {
 
 impl Knapsack {
     /// Create the kanpsack from lines.
-    ///
-    /// This panics if the lines are invalid.
     #[inline]
     fn from_lines<'a, I>(lines: &mut I) -> Self
     where
@@ -67,8 +66,6 @@ impl Knapsack {
 
 impl Object {
     /// Create the knapsack item from lines.
-    ///
-    /// This panics if the lines are invalid.
     #[inline]
     fn from_lines<'a, I>(lines: &mut I) -> Self
     where
