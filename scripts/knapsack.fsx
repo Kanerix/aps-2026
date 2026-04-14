@@ -11,46 +11,37 @@ let rec readItems n =
         let weight = int itemLine[1]
         Item(value, weight) :: readItems (n - 1)
 
-let rec row n =
-    match n with
-    | 0 -> []
-    | _ -> 0 :: row (n - 1)
+let dp (C: int) (items: Item list) =
+    let aux (item: Item) (prev: int array) =
+        let v, w = item
+        Array.init (C + 1) (fun weight ->
+            if weight = 0 then 0
+            elif weight < w then prev.[weight]
+            else max prev.[weight] (prev.[weight - w] + v))
 
-let rec dp (C: int) (items: Item list) =
-    let rec aux (item: Item) (prev: int list) (weight: int) =
-        match item with
-        | _ when weight >= C + 1 -> []
-        | _ when weight = 0 -> 0 :: aux item prev (weight + 1)
-        | _, w when weight < w -> prev[weight] :: aux item prev (weight + 1)
-        | v, w ->
-            let pi = prev[weight]
-            let ci = prev[weight - w] + v
-            max pi ci :: aux item prev (weight + 1)
-
-    let bc = row (C + 1)
+    let bc = Array.zeroCreate (C + 1)
 
     items
     |> List.fold
         (fun (prev, acc) item ->
-            let after = aux item prev 0
-            let combined = after :: acc
-            after, combined)
+            let after = aux item prev
+            after, after :: acc)
         (bc, [])
     |> snd
 
-let backtrack (items: Item list) (table: int list list) =
-    let rec aux (table: int list list) (row: int) (col: int) =
+let backtrack (items: Item array) (table: int array list) =
+    let rec aux (table: int array list) (row: int) (col: int) =
         match table with
         | h :: m :: t ->
-            if h[col] <> m[col] then
-                let v, w = items[row - 1]
+            if h.[col] <> m.[col] then
+                let v, w = items.[row - 1]
                 row - 1 :: aux (m :: t) (row - 1) (col - w)
             else
                 aux (m :: t) (row - 1) col
-        | h :: [] -> if h[col] <> 0 then [ row ] else []
+        | h :: [] -> if h.[col] <> 0 then [ row - 1 ] else []
         | _ -> failwith "unreachable"
 
-    aux table table.Length (table[0].Length - 1)
+    aux table table.Length (table.[0].Length - 1)
 
 let rec solve () =
     let inputLine = Console.ReadLine()
@@ -64,13 +55,13 @@ let rec solve () =
         let n = int inputLine[1]
 
         let items = readItems n
+        let itemsArr = List.toArray items
         let table = dp C items
 
-        let result = backtrack items table
+        let result = backtrack itemsArr table |> List.rev
 
         Console.WriteLine result.Length
-        result |> List.iter (printf "%d ")
-        Console.WriteLine()
+        Console.WriteLine(result |> List.map string |> String.concat " ")
         solve ()
 
 solve ()
