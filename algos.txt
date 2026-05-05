@@ -1,0 +1,7 @@
+Read Black BST
+Fenwick Tree
+Longest palindrome substring
+BFS & DFS (in-depth)
+Dijkstra
+Maxflow
+Random algorithms
