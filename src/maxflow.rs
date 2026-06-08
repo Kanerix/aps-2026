@@ -21,7 +21,11 @@ pub struct Edge<T> {
 
 impl<T> Edge<T> {
     pub fn new(to: T, capacity: u64) -> Self {
-        Self { to, capacity, remaining: capacity }
+        Self {
+            to,
+            capacity,
+            remaining: capacity,
+        }
     }
 }
 
@@ -40,9 +44,6 @@ impl<T> Vertex<T> {
 }
 
 /// BFS from `source` to `sink` over edges with positive remaining capacity.
-///
-/// Returns a map of `node → predecessor` for every visited node, or `None`
-/// if the sink is unreachable.
 fn bfs<'a, T>(
     source: &'a T,
     sink: &T,
@@ -80,8 +81,6 @@ where
     let mut graph: HashMap<T, Vertex<T>> =
         vertices.into_iter().map(|v| (v.value.clone(), v)).collect();
 
-    // Add a reverse edge (remaining = 0) for every forward edge so the
-    // algorithm can cancel previously committed flow.
     let forward_edges: Vec<(T, T)> = graph
         .values()
         .flat_map(|v| v.edges.iter().map(|e| (v.value.clone(), e.to.clone())))
@@ -89,15 +88,17 @@ where
 
     for (from, to) in forward_edges {
         if !graph[&to].edges.iter().any(|e| e.to == from) {
-            graph.get_mut(&to).unwrap().edges.push(Edge { to: from, capacity: 0, remaining: 0 });
+            graph.get_mut(&to).unwrap().edges.push(Edge {
+                to: from,
+                capacity: 0,
+                remaining: 0,
+            });
         }
     }
 
     let mut total_flow = 0u64;
 
     while let Some(parent) = bfs(source, sink, &graph) {
-        // Collect the path as owned (from, to) pairs so we can release the
-        // borrow on `graph` before mutating it.
         let path: Vec<(T, T)> = {
             let mut steps = Vec::new();
             let mut node = sink;
@@ -111,13 +112,34 @@ where
 
         let bottleneck = path
             .iter()
-            .map(|(from, to)| graph[from].edges.iter().find(|e| &e.to == to).unwrap().remaining)
+            .map(|(from, to)| {
+                graph[from]
+                    .edges
+                    .iter()
+                    .find(|e| &e.to == to)
+                    .unwrap()
+                    .remaining
+            })
             .min()
             .unwrap();
 
         for (from, to) in path {
-            graph.get_mut(&from).unwrap().edges.iter_mut().find(|e| e.to == to).unwrap().remaining -= bottleneck;
-            graph.get_mut(&to).unwrap().edges.iter_mut().find(|e| e.to == from).unwrap().remaining += bottleneck;
+            graph
+                .get_mut(&from)
+                .unwrap()
+                .edges
+                .iter_mut()
+                .find(|e| e.to == to)
+                .unwrap()
+                .remaining -= bottleneck;
+            graph
+                .get_mut(&to)
+                .unwrap()
+                .edges
+                .iter_mut()
+                .find(|e| e.to == from)
+                .unwrap()
+                .remaining += bottleneck;
         }
 
         total_flow += bottleneck;
@@ -146,8 +168,8 @@ mod tests {
         //        \--8---------->/
         let vertices = vec![
             Vertex::new("source", vec![Edge::new("a", 5), Edge::new("sink", 8)]),
-            Vertex::new("a",      vec![Edge::new("sink", 3)]),
-            Vertex::new("sink",   vec![]),
+            Vertex::new("a", vec![Edge::new("sink", 3)]),
+            Vertex::new("sink", vec![]),
         ];
         // via a: min(5,3)=3, direct: 8 → total 11
         assert_eq!(maxflow(vertices, &"source", &"sink"), 11);
@@ -158,8 +180,8 @@ mod tests {
         // source --2--> mid --100--> sink
         let vertices = vec![
             Vertex::new("source", vec![Edge::new("mid", 2)]),
-            Vertex::new("mid",    vec![Edge::new("sink", 100)]),
-            Vertex::new("sink",   vec![]),
+            Vertex::new("mid", vec![Edge::new("sink", 100)]),
+            Vertex::new("sink", vec![]),
         ];
         assert_eq!(maxflow(vertices, &"source", &"sink"), 2);
     }
@@ -169,8 +191,8 @@ mod tests {
         // source --5--> a      sink (disconnected)
         let vertices = vec![
             Vertex::new("source", vec![Edge::new("a", 5)]),
-            Vertex::new("a",      vec![]),
-            Vertex::new("sink",   vec![]),
+            Vertex::new("a", vec![]),
+            Vertex::new("sink", vec![]),
         ];
         assert_eq!(maxflow(vertices, &"source", &"sink"), 0);
     }
@@ -182,9 +204,9 @@ mod tests {
         //        \--4--> c --4--/
         let vertices = vec![
             Vertex::new("source", vec![Edge::new("b", 3), Edge::new("c", 4)]),
-            Vertex::new("b",      vec![Edge::new("sink", 3)]),
-            Vertex::new("c",      vec![Edge::new("sink", 4)]),
-            Vertex::new("sink",   vec![]),
+            Vertex::new("b", vec![Edge::new("sink", 3)]),
+            Vertex::new("c", vec![Edge::new("sink", 4)]),
+            Vertex::new("sink", vec![]),
         ];
         // via b: 3, via c: 4 → total 7
         assert_eq!(maxflow(vertices, &"source", &"sink"), 7);
