@@ -31,5 +31,11 @@ def range_sum(tree, start, end):
     return prefix_sum(tree, end) - prefix_sum(tree, start - 1)
 
 
+def add(tree, k, delta):
+    while k < len(tree):
+        tree[k] += delta
+        k += p(k)
+
+
 tree = build(input)
 print(tree)
