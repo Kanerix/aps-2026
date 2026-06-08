@@ -3,3 +3,4 @@
 # Input folder
 /inputs/*
 !/inputs/.gitkeep
+*.pdf
