@@ -2,26 +2,23 @@
 //!
 //! This crate contains algorithms and data structures for the APS 2026 course.
 
-/// A breadth-first search algorithm.
+/// # Breadth-first search
 pub mod bfs;
 
-/// A depth-first search algorithm.
+/// # Depth-first search
 pub mod dfs;
 
-/// A pathfinding graph search algorithm.
+/// # Dijkstra's algorithm
 pub mod dijkstra;
 
-/// A Fenwick tree.
+/// # Fenwick tree
 pub mod fenwick;
 
-/// A maximum flow algorithm.
+/// # Maximum flow
 pub mod maxflow;
 
-/// A random number algorithm.
+/// # Random number
 pub mod random;
 
-/// A red-black binary search tree.
-pub mod rb_bst;
-
-/// A trie.
+/// # Trie
 pub mod trie;

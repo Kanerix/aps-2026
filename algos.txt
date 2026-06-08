@@ -1,6 +1,0 @@
-Read Black BST
-Fenwick Tree
-BFS & DFS (in-depth)
-Dijkstra
-Maxflow
-Random algorithms
