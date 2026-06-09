@@ -2,10 +2,12 @@
 # iterate over the neighbours of each node repeatedly.
 
 # DAG:
-#   A ──► C ──► E
-#         ▲      ▲
-#   B ────┘      |
-#   └───► D ─────┘
+#   A ---> C ---> E
+#          ^      ^
+#          |      |
+#   B -----+      |
+#   |             |
+#   +----> D -----+
 graph = {
     "A": ["C"],
     "B": ["C", "D"],
